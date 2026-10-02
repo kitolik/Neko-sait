@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Твоё Сообщество — игровой Discord-сервер</title>
+  <meta name="description" content="Игровое сообщество в Discord: общение, совместные игры, помощь новичкам и рейды.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f111a;
+      --bg-soft: #151826;
+      --card: #1a1e2e;
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #e8eaf6;
+      --muted: #9aa0b8;
+      --blurple: #5865F2;
+      --blurple-dark: #4752c4;
+      --neon-cyan: #00e5ff;
+      --neon-pink: #ff3d9a;
+      --neon-green: #3dff9a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ---------- Навигация ---------- */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(15, 17, 26, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      color: var(--text);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .logo span { color: var(--neon-cyan); text-shadow: 0 0 12px rgba(0, 229, 255, 0.6); }
+
+    .nav-link {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      transition: border-color 0.25s, background 0.25s, color 0.25s;
+    }
+
+    .nav-link:hover {
+      border-color: var(--blurple);
+      background: rgba(88, 101, 242, 0.15);
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative;
+      padding: 110px 0 120px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(110px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero::before {
+      width: 460px; height: 460px;
+      background: rgba(88, 101, 242, 0.35);
+      top: -140px; left: -120px;
+      animation: float 9s ease-in-out infinite;
+    }
+
+    .hero::after {
+      width: 380px; height: 380px;
+      background: rgba(255, 61, 154, 0.22);
+      bottom: -140px; right: -100px;
+      animation: float 11s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, 25px); }
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+      z-index: 0;
+    }
+
+    .hero .container { position: relative; z-index: 1; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      background: rgba(61, 255, 154, 0.08);
+      border: 1px solid rgba(61, 255, 154, 0.3);
+      border-radius: 999px;
+      color: var(--neon-green);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 28px;
+    }
+
+    .dot {
+      width: 8px; height: 8px;
+      background: var(--neon-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.6rem, 8vw, 5.2rem);
+      line-height: 1.05;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, var(--neon-cyan), var(--blurple) 50%, var(--neon-pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+
+    .hero p.lead {
+      max-width: 660px;
+      margin: 0 auto 40px;
+      font-size: clamp(1rem, 2.4vw, 1.2rem);
+      color: var(--muted);
+    }
+
+    /* ---------- Кнопка Discord ---------- */
+    .btn-discord {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 40px;
+      background: var(--blurple);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 14px;
+      box-shadow: 0 8px 28px rgba(88, 101, 242, 0.45);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .btn-discord::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -120%;
+      width: 80%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.6s ease;
+    }
+
+    .btn-discord:hover {
+      background: var(--blurple-dark);
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 14px 40px rgba(88, 101, 242, 0.7), 0 0 0 4px rgba(88, 101, 242, 0.2);
+    }
+
+    .btn-discord:hover::before { left: 140%; }
+
+    .btn-discord:active { transform: translateY(-1px) scale(0.99); }
+
+    .btn-discord svg {
+      width: 26px; height: 26px;
+      fill: #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .btn-discord:hover svg { transform: rotate(-12deg) scale(1.15); }
+
+    .btn-discord:focus-visible {
+      outline: 3px solid var(--neon-cyan);
+      outline-offset: 4px;
+    }
+
+    .hero-note {
+      margin-top: 18px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ---------- Статистика ---------- */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      max-width: 700px;
+      margin: 64px auto 0;
+    }
+
+    .stat {
+      padding: 20px 10px;
+      background: rgba(26, 30, 46, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .stat b {
+      display: block;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      color: var(--neon-cyan);
+      text-shadow: 0 0 14px rgba(0, 229, 255, 0.45);
+      line-height: 1.1;
+    }
+
+    .stat span {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ---------- Преимущества ---------- */
+    .features {
+      padding: 90px 0 100px;
+      background: var(--bg-soft);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-head {
+      text-align: center;
+      max-width: 620px;
+      margin: 0 auto 56px;
+    }
+
+    .section-head h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .section-head p { color: var(--muted); }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .card {
+      position: relative;
+      padding: 36px 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent, var(--blurple));
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5), 0 0 28px var(--glow, rgba(88, 101, 242, 0.25));
+    }
+
+    .card:nth-child(1) { --accent: var(--neon-cyan); --glow: rgba(0, 229, 255, 0.25); transition-delay: 0s; }
+    .card:nth-child(2) { --accent: var(--blurple); --glow: rgba(88, 101, 242, 0.35); transition-delay: 0.12s; }
+    .card:nth-child(3) { --accent: var(--neon-pink); --glow: rgba(255, 61, 154, 0.25); transition-delay: 0.24s; }
+
+    .card.visible:hover { transition-delay: 0s; }
+
+    .icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 68px; height: 68px;
+      margin-bottom: 22px;
+      font-size: 2rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--accent);
+      border-radius: 18px;
+      box-shadow: 0 0 20px var(--glow);
+    }
+
+    .card h3 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    .card p { color: var(--muted); font-size: 0.97rem; }
+
+    /* ---------- Призыв к действию ---------- */
+    .cta {
+      padding: 90px 0;
+      text-align: center;
+    }
+
+    .cta-box {
+      padding: 56px 24px;
+      background:
+        radial-gradient(ellipse at top, rgba(88, 101, 242, 0.3), transparent 70%),
+        var(--card);
+      border: 1px solid rgba(88, 101, 242, 0.35);
+      border-radius: 28px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .cta-box h2 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .cta-box p {
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+
+    /* ---------- Футер ---------- */
+    footer {
+      padding: 28px 0;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ---------- Адаптивность ---------- */
+    @media (max-width: 900px) {
+      .cards { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 70px 0 80px; }
+      .btn-discord { width: 100%; justify-content: center; padding: 18px 24px; }
+      .stats { gap: 10px; margin-top: 48px; }
+      .stat { padding: 16px 6px; }
+      .features, .cta { padding: 64px 0; }
+      .cta-box { padding: 40px 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .card { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo">Твоё<span>Сообщество</span></a>
+      <a href="https://discord.gg/pukxbBxSw" class="nav-link" target="_blank" rel="noopener">Присоединиться</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-grid"></div>
+      <div class="container">
+        <div class="badge"><span class="dot"></span> Сервер открыт — заходи прямо сейчас</div>
+
+        <h1>Играй вместе.<br><span class="gradient-text">Побеждай вместе.</span></h1>
+
+        <p class="lead">
+          Дружное игровое сообщество в Discord: живое общение, совместные игры по вечерам,
+          помощь новичкам и организованные рейды. Находи команду и становись сильнее вместе с нами.
+        </p>
+
+        <a href="https://discord.gg/pukxbBxSw" class="btn-discord" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+          </svg>
+          Войти в Discord
+        </a>
+
+        <p class="hero-note">Бесплатно · Без регистрации на сторонних сайтах</p>
+
+        <div class="stats">
+          <div class="stat"><b data-count="1500">0</b><span>участников</span></div>
+          <div class="stat"><b data-count="40">0</b><span>игр и каналов</span></div>
+          <div class="stat"><b>24/7</b><span>живой онлайн</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-head">
+          <h2>Почему тебе <span class="gradient-text">у нас понравится</span></h2>
+          <p>Всё, что нужно геймеру: компания, команда и знания.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card">
+            <div class="icon">💬</div>
+            <h3>Общение и тусовка</h3>
+            <p>Уютные голосовые и текстовые каналы, мемы, обсуждения новинок и вечера в войс-чате. Здесь легко найти друзей.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🎮</div>
+            <h3>Поиск пати</h3>
+            <p>Собери команду за пару минут: отдельные каналы под каждую игру, рейды по расписанию и турниры внутри сообщества.</p>
+          </article>
+
+          <article class="card">
+            <div class="icon">🧠</div>
+            <h3>Полезный опыт</h3>
+            <p>Гайды, разборы билдов и советы от опытных игроков. Новичкам помогаем бесплатно и без токсичности.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Готов <span class="gradient-text">присоединиться?</span></h2>
+          <p>Нажми на кнопку, прими приглашение и сразу попадёшь в войс к ребятам.</p>
+          <a href="https://discord.gg/pukxbBxSw" class="btn-discord" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+            </svg>
+            Войти в Discord
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© <span id="year"></span> Твоё Сообщество. Не является официальным сервисом Discord Inc.</div>
+  </footer>
+
+  <script>
+    // Год в футере
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Плавное появление карточек при прокрутке
+    var cards = document.querySelectorAll('.card');
+    if ('IntersectionObserver' in window) {
+      var cardObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            cardObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15 });
+      cards.forEach(function (card) { cardObserver.observe(card); });
+    } else {
+      cards.forEach(function (card) { card.classList.add('visible'); });
+    }
+
+    // Анимация счётчиков статистики
+    var counters = document.querySelectorAll('[data-count]');
+    counters.forEach(function (el) {
+      var target = parseInt(el.getAttribute('data-count'), 10);
+      var duration = 1600;
+      var start = null;
+
+      function step(timestamp) {
+        if (!start) start = timestamp;
+        var progress = Math.min((timestamp - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target).toLocaleString('ru-RU') + (progress === 1 ? '+' : '');
+        if (progress < 1) requestAnimationFrame(step);
+      }
+
+      requestAnimationFrame(step);
+    });
+  </script>
+</body>
+</html>
